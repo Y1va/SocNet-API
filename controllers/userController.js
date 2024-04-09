@@ -1,22 +1,30 @@
+// Importing the User and Thought models
 const { User, Thought } = require('../models');
 
+// Exporting the controller object
 module.exports = {
   // Get all users
   async getUsers(req, res) {
     try {
+      // Fetch all users from the database
       const users = await User.find();
+      // Send the users as a JSON response
       res.json(users);
     } catch (err) {
+      // If there is an error, log it and send a 500 error response
       console.error(err);
       res
         .status(500)
         .json({ error: 'There was a problem while getting users ' });
     }
   },
-  // Get a single user by its id
+
+  // Get a single user by its Id
   async getSingleUser(req, res) {
+    // Extracting userId from request parameters
     const { userId } = req.params;
     try {
+      // Find a user in the database by their Id
       const user = await User.findOne(userId);
       if (!user) {
         return res
@@ -41,7 +49,7 @@ module.exports = {
     }
   },
 
-  // Update a user by its id
+  // Update a user by its Id
   async updateUser(req, res) {
     const { userId } = req.params;
     const { username, email } = req.body;
@@ -51,13 +59,36 @@ module.exports = {
         { username, email },
         { runValidators: true, new: true }
       );
-      if(!user) {
-        return res.status(404).json({ message: 'Cannot update user with this ID'})
+      if (!user) {
+        return res
+          .status(404)
+          .json({ message: 'Cannot update user with this ID' });
       }
-      res.json(user)
+      res.json(user);
     } catch (err) {
-      console.error(err)
-      res.status(500).json({ error: 'Internal Server Error'})
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  // Delete user and remove thoughts associated with user
+  async deleteUser(req, res) {
+    const { userId } = req.params;
+    try {
+      // Find the user to be deleted by its Id
+      const user = await User.findOneAndRemove(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found with that ID' });
+      }
+      // Remove all thoughts associated with the user
+      await Thought.deleteMany({ username: user.username });
+      // Delete the user from the database
+      await user.remove();
+      // Sends a succes message as a JSON response
+      res.json({ message: 'User deleted successfully' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 };
