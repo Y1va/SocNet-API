@@ -1,5 +1,6 @@
 const { Schema, model, Types } = require('mongoose');
 
+// Define user schema
 const userSchema = new Schema(
   {
     // Field for the username
@@ -41,6 +42,7 @@ const userSchema = new Schema(
   },
   {
     toJSON: {
+      virtuals: true,
       getters: true
     },
     id: false
