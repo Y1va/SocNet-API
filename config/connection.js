@@ -6,7 +6,7 @@ const { connect, connection } = require('mongoose');
 const connectionString = 'mongodb://127.0.0.1:27017/usersDB';
 
 
-// Establishing the connection to the MongoDB databse using the connection string
+// Establishing the connection to the MongoDB database using the connection string
 connect(connectionString);
 
 
