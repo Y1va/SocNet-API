@@ -91,5 +91,24 @@ module.exports = {
       console.error(err);
       res.status(500).json({ error: 'Internal Server Error' });
     }
+  },
+
+  // Create a reaction for a thought
+  async createReaction(req, res) {
+    try {
+      const thought = await Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        // Use addToSet to prevent duplicates in the reactions array
+        { $addToSet: { reactions: req.body }},
+        { runValidators: true, new: true }
+      );
+
+      if (!thought) {
+        return res.status(404).json({ message: 'No thought with this ID' });
+      }
+      res.json({ message: 'Reaction added successfully', thought});
+    } catch (err) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 };
