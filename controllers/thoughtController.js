@@ -63,9 +63,30 @@ module.exports = {
       );
 
       if (!thought) {
-        return res.status(404).json({ message: 'No thought with this Id' });
+        return res.status(404).json({ message: 'No thought with this ID' });
       }
       res.json(thought);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  // Delete a thought
+  async deleteThought(req, res) {
+    try {
+      const thought = await Thought.findOneAndDelete({
+        _id: req.params.thoughtId
+      });
+
+      if (!thought) {
+        return res.status(404).json({ message: 'No thought with that ID' });
+      }
+
+      // Remove the deleted thoughts _id from the associated users thoughts array
+      await User.updateMany({}, { $pull: { thoughts: thought._id } });
+
+      res.json({ message: 'Thought deleted successfully' });
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Internal Server Error' });
