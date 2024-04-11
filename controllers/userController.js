@@ -80,19 +80,27 @@ module.exports = {
       if (!user) {
         return res.status(404).json({ message: 'User not found with that ID' });
       }
-      // Remove all thoughts associated with the user
-      await Thought.deleteMany({ username: user.username });
+      // Find thoughts associated with the user
+      const thoughts = await Thought.find({ username: user.username });
+
+      if (thoughts.length > 0) {
+        // If there are thoughts found, delete them
+        await Thought.deleteMany({ username: user.username });
+        // Sends a success message indicating user and thoughts deletion
+        res.json({ message: 'User and associated thoughts successfully deleted' });
+      } else {
+        // If no thoughts are found, return a message saying no thoughts are found
+        res.json({message:'User successfully deleted, No associated thoughts were found.' });
+      }
       // Delete the user from the database
       await user.remove();
-      // Sends a succes message as a JSON response
-      res.json({ message: 'User deleted successfully' });
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   },
 
-  // Add Friend
+  // Add Friend to users friend list
   async addFriend(req, res) {
     console.log('You are adding a friend');
     console.log(req.body);
@@ -106,12 +114,28 @@ module.exports = {
       if (!user) {
         return res.status(404).json({ message: 'No user found with that ID' });
       }
-      res.json(user);
+      res.json({ message: 'Friend added succsessfully', user });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  // Remove Friend from users friend list
+  async removeFriend(req, res) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $pull: { friends: req.params.friendId } },
+        { runValidators: true, new: true }
+      );
+      if (!user) {
+        return res.status(404).json({ message: 'No user found with that ID' });
+      }
+      res.json({ message: 'Friend removed succuessfully', user });
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
-
-  // Remove Friend
 };
