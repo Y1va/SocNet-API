@@ -98,7 +98,7 @@ module.exports = {
     console.log(req.body);
 
     try {
-      const user = User.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $addToSet: { friends: req.body.friendId || req.params.friendId } },
         { runValidators: true, new: true }
@@ -108,7 +108,7 @@ module.exports = {
       }
       res.json(user);
     } catch (err) {
-      console.error(err)
+      console.error(err);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
