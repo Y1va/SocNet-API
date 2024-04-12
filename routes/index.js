@@ -5,7 +5,7 @@ const router = require('express').Router();
 const apiRoutes = require('./api');
 
 // Using the api routes for requests starting with /api
-router.use('./api', apiRoutes);
+router.use('/api', apiRoutes);
 
 // Middleware to handle requests that don't match any defined routes
 router.use((req, res) => res.send('Wrong Route'));
