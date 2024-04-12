@@ -65,7 +65,7 @@ module.exports = {
       if (!thought) {
         return res.status(404).json({ message: 'No thought with this ID' });
       }
-      res.json(thought);
+      res.json({ message: 'Thought updated successfully' }, thought);
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -99,15 +99,35 @@ module.exports = {
       const thought = await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
         // Use addToSet to prevent duplicates in the reactions array
-        { $addToSet: { reactions: req.body }},
+        { $addToSet: { reactions: req.body } },
         { runValidators: true, new: true }
       );
 
       if (!thought) {
-        return res.status(404).json({ message: 'No thought with this ID' });
+        return res.status(404).json({ message: 'No thought with that ID' });
       }
-      res.json({ message: 'Reaction added successfully', thought});
+      res.json({ message: 'Reaction added successfully', thought });
     } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  // Delete a reaction by the reactionId value
+  async deleteReaction(req, res) {
+    try {
+      const thought = await Thought.findByIdAndUpdate(
+        { _id: req.params.thoughtId },
+        { $pull: { reactions: { reactionId: req.params.reactionId } } },
+        { runValidators: true, new: true }
+      );
+
+      if (!thought) {
+        return res.status(404).json({ message: 'No thought with that ID' });
+      }
+      res.json({ message: 'Reaction deleted successfully', thought });
+    } catch (err) {
+      console.error(err);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
