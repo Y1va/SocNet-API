@@ -29,14 +29,14 @@ const userSchema = new Schema(
     thoughts: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Thought'
+        ref: 'Thought',
       }
     ],
     // Field for storing the IDs of other users (friends) associated with the user
     friends: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
       }
     ]
   },
