@@ -17,8 +17,8 @@ async function seedDataBase() {
     const seedUsers = await User.insertMany(users);
 
     // Associate thoughts with users
-    const thoughtsWithUsers = thoughts.map(thought => {
-      const user = seedUsers.find(user => user.username === thought.username);
+    const thoughtsWithUsers = thoughts.map((thought) => {
+      const user = seedUsers.find((user) => user.username === thought.username);
       thought.userId = user._id;
       return thought;
     });
@@ -26,12 +26,14 @@ async function seedDataBase() {
     // Seed the thoughts
     await Thought.insertMany(thoughtsWithUsers);
 
-    console.log('Database seeded successfully')
+
+
+    console.log('Database seeded successfully');
   } catch (err) {
     console.error('Error whilst seeding database', err);
   } finally {
     // Disconnect from MongoDB
-    await connection.close()
+    await connection.close();
   }
 }
 
