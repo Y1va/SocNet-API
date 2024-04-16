@@ -25,7 +25,8 @@ module.exports = {
     const { userId } = req.params;
     try {
       // Find a user in the database by their Id
-      const user = await User.findOne(userId);
+      // findOne accepts a query object, not just the ID
+      const user = await User.findOne({ _id: userId });
       if (!user) {
         return res
           .status(404)
@@ -55,7 +56,7 @@ module.exports = {
     const { username, email } = req.body;
     try {
       const user = await User.findOneAndUpdate(
-        userId,
+        { _id: userId },
         { username, email },
         { runValidators: true, new: true }
       );
@@ -76,7 +77,7 @@ module.exports = {
     const { userId } = req.params;
     try {
       // Find the user to be deleted by its Id
-      const user = await User.findOneAndRemove(userId);
+      const user = await User.findOneAndRemove({ _id: userId });
       if (!user) {
         return res.status(404).json({ message: 'User not found with that ID' });
       }
@@ -87,10 +88,15 @@ module.exports = {
         // If there are thoughts found, delete them
         await Thought.deleteMany({ username: user.username });
         // Sends a success message indicating user and thoughts deletion
-        res.json({ message: 'User and associated thoughts successfully deleted' });
+        res.json({
+          message: 'User and associated thoughts successfully deleted'
+        });
       } else {
         // If no thoughts are found, return a message saying no thoughts are found
-        res.json({message:'User successfully deleted, No associated thoughts were found.' });
+        res.json({
+          message:
+            'User successfully deleted, No associated thoughts were found.'
+        });
       }
       // Delete the user from the database
       await user.remove();

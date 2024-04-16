@@ -5,7 +5,7 @@ const users = [
   },
   {
     username: 'Alice Smith',
-    email: 'alice.smith@example.com'
+    email: 'alice.smith@example.com',
   },
   {
     username: 'Bob Johnson',
@@ -13,7 +13,7 @@ const users = [
   },
   {
     username: 'Emily Davis',
-    email: 'emily.davis@example.com'
+    email: 'emily.davis@example.com',
   },
   {
     username: 'Michael Wilson',
@@ -25,7 +25,7 @@ const users = [
   },
   {
     username: 'David Lee',
-    email: 'david.lee@example.com'
+    email: 'david.lee@example.com',
   },
   {
     username: 'Sophia Martinez',
